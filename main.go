@@ -18,6 +18,7 @@ func main() {
 	startServer := flag.Bool("s", false, "server")
 	startClient := flag.Bool("c", false, "client")
 	bufferLenght := flag.Int("b", 4096, "buffer")
+	proto := flag.String("p", "tcp", "proto")
 	//totalSize := flag.Int("t", 1073741824, "total")
 	totalSize := flag.Int("t", 40960, "total")
 	flag.Parse()
@@ -26,7 +27,19 @@ func main() {
 		// start the server
 		go func() {
 			hasher := hash.New()
-			ln, err := udt.Listen("udp", ":8081")
+			var ln net.Listener
+			var err error
+			switch *proto {
+			case "tcp":
+				ln, err = net.Listen("tcp", ":8081")
+			case "udt":
+				ln, err = udt.Listen("udp", ":8081")
+			case "quic":
+				//
+			default:
+				
+			}
+			
 			if err != nil {
 				panic(err)
 			}
@@ -57,7 +70,19 @@ func main() {
 	if *startClient {
 		// run the client
 		go func() {
-			conn, err := udt.Dial("localhost:8081")
+			var conn net.Conn
+			var err error
+			switch *proto {
+			case "tcp":
+				conn, err = net.Dial("tcp", "localhost:8081")
+			case "udt":
+				conn, err = udt.Dial("localhost:8081")
+			case "quic":
+				//
+			default:
+				
+			}
+			
 			if err != nil {
 				panic(err)
 			}
