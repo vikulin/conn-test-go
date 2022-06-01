@@ -53,7 +53,7 @@ func main() {
 				panic(err)
 			}
 			fmt.Println("Established connection")
-			parts := *totalSize % *bufferLenght
+			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 			for i := 0; i < parts; i++ {
 				data := random_bytes(*bufferLenght)
@@ -67,6 +67,7 @@ func main() {
 			}
 			conn.Close()
 			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
+			fmt.Printf("Parts: %d, tail: %x\n", parts, tail)
 			//fmt.Printf("RAW data %x\n", data)
 		}()
 	}
@@ -96,7 +97,7 @@ func main() {
 				panic(err)
 			}
 		
-			parts := *totalSize % *bufferLenght
+			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 			for i := 0; i < parts; i++ {
 				n, err := read_conn(conn, data)
@@ -115,6 +116,7 @@ func main() {
 			}
 			conn.Close()
 			fmt.Printf("Downloaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
+			fmt.Printf("Parts: %d, tail: %x\n", parts, tail)
 			//fmt.Printf("RAW data %x\n", data)
 		}()
 	}
