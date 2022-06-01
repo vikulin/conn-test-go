@@ -2,19 +2,28 @@ package main
 
 import (
 	"flag"
-	//"time"
 	"fmt"
 	"net"
 	"io"
 	"time"
-	"math/rand"
+	mrand "math/rand"
+
+	/**QUIC related imports**/
+	crand "crypto/rand"
+	"crypto/rsa"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
+	"math/big"
+	/**QUIC related imports**/
+
 	hash "github.com/zeebo/xxh3"
 
 	udt "github.com/vikulin/udt-conn"
+	quic "github.com/vikulin/quic-conn"
 )
 
 func main() {
-	// utils.SetLogLevel(utils.LogLevelDebug)
 
 	host := flag.String("h", "localhost:48000", "host")
 	startServer := flag.Bool("s", false, "server")
@@ -38,7 +47,9 @@ func main() {
 			case "udt":
 				ln, err = udt.Listen("udp", *host)
 			case "quic":
-				//
+				//generate tls config
+				tlsConf := generateTLSConfig()
+				ln, err = quic.Listen("udp", *host, tlsConf)
 			default:
 				
 			}
@@ -85,7 +96,11 @@ func main() {
 			case "udt":
 				conn, err = udt.Dial(*host)
 			case "quic":
-				//
+				tlsConf := &tls.Config{
+					InsecureSkipVerify: true,
+					NextProtos:   []string{"quic-conn-test"},
+				}
+				conn, err = quic.Dial(*host, tlsConf)
 			default:
 				
 			}
@@ -162,9 +177,9 @@ func read_conn(c net.Conn, buffer []byte) (int, error) {
 }
 
 func random_bytes(length int) []byte {
-	rand.Seed(time.Now().UnixNano())
+	mrand.Seed(time.Now().UnixNano())
 	b := make([]byte, length)
-	rand.Read(b)
+	mrand.Read(b)
 	return b
 }
 
@@ -174,5 +189,29 @@ func elapsed_time(start time.Time, total int, name string) {
 	speed := float64(total)/(float64(1024*1024)*elapsed_seconds) /**MB/sec**/
 	fmt.Printf("%f MB/sec\n", speed)
 	fmt.Printf("%s - %s time\n", elapsed, name)
+}
+
+//QUIC infrastructure
+func generateTLSConfig() *tls.Config {
+	key, err := rsa.GenerateKey(crand.Reader, 1024)
+	if err != nil {
+		panic(err)
+	}
+	template := x509.Certificate{SerialNumber: big.NewInt(1)}
+	certDER, err := x509.CreateCertificate(crand.Reader, &template, &template, &key.PublicKey, key)
+	if err != nil {
+		panic(err)
+	}
+	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
+	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+
+	tlsCert, err := tls.X509KeyPair(certPEM, keyPEM)
+	if err != nil {
+		panic(err)
+	}
+	return &tls.Config{
+		Certificates: []tls.Certificate{tlsCert},
+		NextProtos:   []string{"quic-conn-test"},
+	}
 }
 
