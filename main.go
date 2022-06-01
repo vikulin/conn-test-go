@@ -59,7 +59,7 @@ func main() {
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 
-			upload(conn, parts, tail, hasher, *bufferLenght)
+			upload(conn, parts, tail, *totalSize, hasher, *bufferLenght)
 
 			conn.Close()
 			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
@@ -97,7 +97,7 @@ func main() {
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 		
-			download(conn, parts, tail, hasher, data)
+			download(conn, parts, tail, *totalSize, hasher, data)
 			
 			conn.Close()
 			fmt.Printf("Downloaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
@@ -109,9 +109,9 @@ func main() {
 	time.Sleep(time.Hour)
 }
 
-func upload(conn net.Conn, parts int, tail int, hasher *hash.Hasher, l int) {
+func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, l int) {
 
-	defer elapsed_time(time.Now(), "upload")
+	defer elapsed_time(time.Now(), total, "upload")
 	
 	for i := 0; i < parts; i++ {
 		data := random_bytes(l)
@@ -125,9 +125,9 @@ func upload(conn net.Conn, parts int, tail int, hasher *hash.Hasher, l int) {
 	}
 }
 
-func download(conn net.Conn, parts int, tail int, hasher *hash.Hasher, data []byte) {
+func download(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, data []byte) {
 
-	defer elapsed_time(time.Now(), "download")
+	defer elapsed_time(time.Now(), total, "download")
 
 	for i := 0; i < parts; i++ {
 		n, err := read_conn(conn, data)
@@ -168,7 +168,11 @@ func random_bytes(length int) []byte {
 	return b
 }
 
-func elapsed_time(start time.Time, name string) {
-    elapsed := time.Since(start)
-    fmt.Printf("%s - %s\n", name, elapsed)
+func elapsed_time(start time.Time, total int, name string) {
+	elapsed := time.Since(start)
+	elapsed_seconds:=float64(elapsed/time.Second)
+	speed := float64(total)/(float64(1024*1024)*elapsed_seconds) /**MB/sec**/
+	fmt.Printf("%f MB/sec\n", speed)
+	fmt.Printf("%s - %s time\n", elapsed, name)
 }
+
