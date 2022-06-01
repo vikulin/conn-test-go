@@ -45,6 +45,9 @@ func main() {
 			}
 
 			fmt.Println("Waiting for incoming connection")
+			/**
+			Listening for a connection
+			**/
 			conn, err := ln.Accept()
 			if err != nil {
 				panic(err)
@@ -62,6 +65,7 @@ func main() {
 				hasher.Write(data)
 				conn.Write(data)
 			}
+			conn.Close()
 			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
 			//fmt.Printf("RAW data %x\n", data)
 		}()
@@ -70,8 +74,13 @@ func main() {
 	if *startClient {
 		// run the client
 		go func() {
+			data := make([]byte, *bufferLenght)
+			hasher := hash.New()
 			var conn net.Conn
 			var err error
+			/**
+			Started dialing
+			**/
 			switch *proto {
 			case "tcp":
 				conn, err = net.Dial("tcp", "localhost:8081")
@@ -86,12 +95,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-
-			// listen for reply
-			data := make([]byte, *bufferLenght)
-			
-			hasher := hash.New()
-			
+		
 			parts := *totalSize % *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 			for i := 0; i < parts; i++ {
@@ -100,7 +104,6 @@ func main() {
 					panic(err)
 				}
 				hasher.Write(data[:n])
-				conn.Write(data[:n])
 			}
 			if tail > 0 {
 				data := make([]byte, tail)
@@ -109,9 +112,9 @@ func main() {
 					panic(err)
 				}
 				hasher.Write(data[:n])
-				conn.Write(data[:n])
 			}
-			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
+			conn.Close()
+			fmt.Printf("Downloaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
 			//fmt.Printf("RAW data %x\n", data)
 		}()
 	}
