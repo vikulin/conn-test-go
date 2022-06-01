@@ -17,7 +17,9 @@ func main() {
 
 	startServer := flag.Bool("s", false, "server")
 	startClient := flag.Bool("c", false, "client")
-	bufferLenght := flag.Int("b", 8, "buffer")
+	bufferLenght := flag.Int("b", 4096, "buffer")
+	//totalSize := flag.Int("t", 1073741824, "total")
+	totalSize := flag.Int("t", 40960, "total")
 	flag.Parse()
 
 	if *startServer {
@@ -35,10 +37,19 @@ func main() {
 				panic(err)
 			}
 			fmt.Println("Established connection")
-			data := random_bytes(*bufferLenght)
-			hasher.Write(data)
-			conn.Write(data)
-			fmt.Printf("Uploaded data. size: %d, hash: %x\n", len(data), hasher.Sum64())
+			parts := *totalSize % *bufferLenght
+			tail := *totalSize - *bufferLenght * parts
+			for i := 0; i < parts; i++ {
+				data := random_bytes(*bufferLenght)
+				hasher.Write(data)
+				conn.Write(data)
+			}
+			if tail > 0 {
+				data := random_bytes(tail)
+				hasher.Write(data)
+				conn.Write(data)
+			}
+			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
 			//fmt.Printf("RAW data %x\n", data)
 		}()
 	}
@@ -53,13 +64,29 @@ func main() {
 
 			// listen for reply
 			data := make([]byte, *bufferLenght)
-			n, err := read_conn(conn, data)
-			if err != nil {
-				panic(err)
-			}
+			
 			hasher := hash.New()
-			hasher.Write(data[:n])
-			fmt.Printf("Downloaded data. size: %d, hash: %x\n", len(data[:n]), hasher.Sum64())
+			
+			parts := *totalSize % *bufferLenght
+			tail := *totalSize - *bufferLenght * parts
+			for i := 0; i < parts; i++ {
+				n, err := read_conn(conn, data)
+				if err != nil {
+					panic(err)
+				}
+				hasher.Write(data[:n])
+				conn.Write(data[:n])
+			}
+			if tail > 0 {
+				data := make([]byte, tail)
+				n, err := read_conn(conn, data)
+				if err != nil {
+					panic(err)
+				}
+				hasher.Write(data[:n])
+				conn.Write(data[:n])
+			}
+			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
 			//fmt.Printf("RAW data %x\n", data)
 		}()
 	}
