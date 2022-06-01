@@ -1,0 +1,12 @@
+github.com/furstenheim/nth_element v0.0.0-20190419153334-6ae3dd61145d h1:ph6fZ1/OdQ4MITFY2FH8XGtztp4jRPv7f+P3OXCnOBI=
+github.com/furstenheim/nth_element v0.0.0-20190419153334-6ae3dd61145d/go.mod h1:wiFjePPTcPnPl5zlyrjHTXRPsq8z+1m8I0pCXYMoGlg=
+github.com/klauspost/cpuid/v2 v2.0.9 h1:lgaqFMSdTdQYdZ04uHyN2d/eKdOMyi2YLSvlQIBFYa4=
+github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
+github.com/vikulin/go-udt v0.0.0-20220529173347-d3503b4c7f90 h1:rYDbq9PwXRbFEpl0VUDrQqax0SmS2ZtXYqjXXY4nMDQ=
+github.com/vikulin/go-udt v0.0.0-20220529173347-d3503b4c7f90/go.mod h1:UiGXrPeSjRLoMAMqHqGQomggnlnh9PpAS1maaNmGWpo=
+github.com/vikulin/udt-conn v0.0.0-20220529173433-591b96e6b7ce h1:Oeb62SvLbaLgS6nQYDum6KtHiX0RIMxsC8Wt2BcG0j8=
+github.com/vikulin/udt-conn v0.0.0-20220529173433-591b96e6b7ce/go.mod h1:hgd5CUmAj/+8oKtqrSXQtkoq5ITzYaiXUdB0BNJu62s=
+github.com/zeebo/xxh3 v1.0.2 h1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=
+github.com/zeebo/xxh3 v1.0.2/go.mod h1:5NWz9Sef7zIDm2JHfFlcQvNekmcEl9ekUZQQKCYaDcA=
+golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a h1:dGzPydgVsqGcTRVwiLJ1jVbufYwmzD3LfVPLKsKg+0k=
+golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
