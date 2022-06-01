@@ -4,8 +4,16 @@ github.com/klauspost/cpuid/v2 v2.0.9 h1:lgaqFMSdTdQYdZ04uHyN2d/eKdOMyi2YLSvlQIBF
 github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
 github.com/vikulin/go-udt v0.0.0-20220529173347-d3503b4c7f90 h1:rYDbq9PwXRbFEpl0VUDrQqax0SmS2ZtXYqjXXY4nMDQ=
 github.com/vikulin/go-udt v0.0.0-20220529173347-d3503b4c7f90/go.mod h1:UiGXrPeSjRLoMAMqHqGQomggnlnh9PpAS1maaNmGWpo=
+github.com/vikulin/go-udt v0.0.0-20220601163422-80849e6f9be3 h1:IFSXVoyFKyHQhM5HB5eaRoRQgxOQfXfh0CduBfc3u0c=
+github.com/vikulin/go-udt v0.0.0-20220601163422-80849e6f9be3/go.mod h1:UiGXrPeSjRLoMAMqHqGQomggnlnh9PpAS1maaNmGWpo=
+github.com/vikulin/go-udt v0.0.0-20220601163943-774f3d27993d h1:J+G0cuELIEirEkA+DXq+/jkBDEW+YBkr5I43uVvgSkk=
+github.com/vikulin/go-udt v0.0.0-20220601163943-774f3d27993d/go.mod h1:UiGXrPeSjRLoMAMqHqGQomggnlnh9PpAS1maaNmGWpo=
 github.com/vikulin/udt-conn v0.0.0-20220529173433-591b96e6b7ce h1:Oeb62SvLbaLgS6nQYDum6KtHiX0RIMxsC8Wt2BcG0j8=
 github.com/vikulin/udt-conn v0.0.0-20220529173433-591b96e6b7ce/go.mod h1:hgd5CUmAj/+8oKtqrSXQtkoq5ITzYaiXUdB0BNJu62s=
+github.com/vikulin/udt-conn v0.0.0-20220601163610-ed8b17328041 h1:KLZl1WrGSc7+iNDCoQqc37d4du+o3XS4OSlxBr65L1c=
+github.com/vikulin/udt-conn v0.0.0-20220601163610-ed8b17328041/go.mod h1:uSXdIVxlOUttThS4e3eoCwFKXYFxznXzkIExW/5cXS0=
+github.com/vikulin/udt-conn v0.0.0-20220601164052-fb0f09b1b41e h1:VAQ+Pj8H3ypNdmvmCRKdV+wheS53mbzr38RDGP1hx3g=
+github.com/vikulin/udt-conn v0.0.0-20220601164052-fb0f09b1b41e/go.mod h1:zUPwKOQmnOzmHHt7Upld0k97BhuQbbOfgPf5u3B2hGw=
 github.com/zeebo/xxh3 v1.0.2 h1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=
 github.com/zeebo/xxh3 v1.0.2/go.mod h1:5NWz9Sef7zIDm2JHfFlcQvNekmcEl9ekUZQQKCYaDcA=
 golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a h1:dGzPydgVsqGcTRVwiLJ1jVbufYwmzD3LfVPLKsKg+0k=
