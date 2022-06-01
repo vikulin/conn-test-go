@@ -71,7 +71,8 @@ func main() {
 			tail := *totalSize - *bufferLenght * parts
 
 			upload(conn, parts, tail, *totalSize, hasher, *bufferLenght)
-
+			
+			fmt.Printf("Done\n")
 			conn.Close()
 			fmt.Printf("Uploaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
 			fmt.Printf("Parts: %d, tail: %x\n", parts, tail)
@@ -114,6 +115,7 @@ func main() {
 		
 			download(conn, parts, tail, *totalSize, hasher, data)
 			
+			fmt.Printf("Done\n")
 			conn.Close()
 			fmt.Printf("Downloaded data. size: %d, hash: %x\n", *totalSize, hasher.Sum64())
 			fmt.Printf("Parts: %d, tail: %x\n", parts, tail)

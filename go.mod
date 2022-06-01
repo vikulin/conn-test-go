@@ -16,7 +16,7 @@ require (
 	github.com/marten-seemann/qtls-go1-18 v0.1.1 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/onsi/ginkgo v1.16.4 // indirect
-	github.com/vikulin/quic-conn v0.0.0-20220528080447-7790d1059a2e // indirect
+	github.com/vikulin/quic-conn v0.0.0-20220601181416-9fe208fd7d3e // indirect
 	github.com/vikulin/udt-conn v0.0.0-20220601165718-e9303081796f // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
