@@ -1,5 +1,5 @@
 # conn-test-go
-golang simple code to test upload, download and bidirectional spped comparison for different TCP/UDP protocols
+golang simple code to test upload, download and bidirectional speed comparison for different TCP/UDP protocols
 
 Supports:
 
