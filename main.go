@@ -21,11 +21,12 @@ import (
 
 	udt "github.com/vikulin/udt-conn"
 	quic "github.com/vikulin/quic-conn"
+	kcpconn "github.com/xtaci/kcp-go/v5"
 )
 
 func main() {
 
-	host := flag.String("h", "localhost:48000", "host")
+	host := flag.String("h", "127.0.0.1:48000", "host")
 	startServer := flag.Bool("s", false, "server")
 	startClient := flag.Bool("c", false, "client")
 	bufferLenght := flag.Int("b", 4096, "buffer")
@@ -50,6 +51,8 @@ func main() {
 				//generate tls config
 				tlsConf := generateTLSConfig()
 				ln, err = quic.Listen("udp", *host, tlsConf)
+			case "kcp":
+				ln, err = kcpconn.Listen(*host)
 			default:
 				
 			}
@@ -102,6 +105,8 @@ func main() {
 					NextProtos:   []string{"quic-conn-test"},
 				}
 				conn, err = quic.Dial(*host, tlsConf)
+			case "kcp":
+				conn, err = kcpconn.Dial(*host)
 			default:
 				
 			}
