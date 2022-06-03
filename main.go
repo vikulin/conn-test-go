@@ -45,14 +45,18 @@ func main() {
 			switch *proto {
 			case "tcp":
 				ln, err = net.Listen("tcp", *host)
+				fmt.Println("Listening TCP...")
 			case "udt":
 				ln, err = udt.Listen("udp", *host)
+				fmt.Println("Listening UDT...")
 			case "quic":
 				//generate tls config
 				tlsConf := generateTLSConfig()
 				ln, err = quic.Listen("udp", *host, tlsConf)
+				fmt.Println("Listening QUIC...")
 			case "kcp":
 				ln, err = kcpconn.Listen(*host)
+				fmt.Println("Listening KCP...")
 			default:
 				
 			}
@@ -61,15 +65,15 @@ func main() {
 				panic(err)
 			}
 
-			fmt.Println("Waiting for incoming connection")
 			/**
 			Listening for a connection
 			**/
 			conn, err := ln.Accept()
 			if err != nil {
 				panic(err)
+			} else {
+				fmt.Printf("OK")
 			}
-			fmt.Println("Established connection")
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 
@@ -98,7 +102,7 @@ func main() {
 			case "tcp":
 				conn, err = net.Dial("tcp", *host)
 			case "udt":
-				conn, err = udt.Dial(*host)
+				//conn, err = udt.Dial(*host)
 			case "quic":
 				tlsConf := &tls.Config{
 					InsecureSkipVerify: true,
@@ -106,6 +110,7 @@ func main() {
 				}
 				conn, err = quic.Dial(*host, tlsConf)
 			case "kcp":
+				fmt.Printf("Dialling...")
 				conn, err = kcpconn.Dial(*host)
 			default:
 				
@@ -113,6 +118,8 @@ func main() {
 			
 			if err != nil {
 				panic(err)
+			} else {
+				fmt.Printf("OK")
 			}
 
 			parts := *totalSize / *bufferLenght
