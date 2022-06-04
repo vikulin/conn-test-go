@@ -45,18 +45,18 @@ func main() {
 			switch *proto {
 			case "tcp":
 				ln, err = net.Listen("tcp", *host)
-				fmt.Println("Listening TCP...")
+				fmt.Printf("Listening TCP...")
 			case "udt":
 				ln, err = udt.Listen("udp", *host)
-				fmt.Println("Listening UDT...")
+				fmt.Printf("Listening UDT...")
 			case "quic":
 				//generate tls config
 				tlsConf := generateTLSConfig()
 				ln, err = quic.Listen("udp", *host, tlsConf)
-				fmt.Println("Listening QUIC...")
+				fmt.Printf("Listening QUIC...")
 			case "kcp":
 				ln, err = kcpconn.Listen(*host)
-				fmt.Println("Listening KCP...")
+				fmt.Printf("Listening KCP...")
 			default:
 				
 			}
@@ -72,7 +72,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			} else {
-				fmt.Printf("OK")
+				fmt.Printf("OK\n")
 			}
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
@@ -112,6 +112,8 @@ func main() {
 			case "kcp":
 				fmt.Printf("Dialling...")
 				conn, err = kcpconn.Dial(*host)
+				//workaround for https://github.com/xtaci/kcp-go/issues/225
+				conn.Write([]byte("."))
 			default:
 				
 			}
@@ -119,7 +121,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			} else {
-				fmt.Printf("OK")
+				fmt.Printf("OK\n")
 			}
 
 			parts := *totalSize / *bufferLenght
