@@ -9,6 +9,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/furstenheim/nth_element v0.0.0-20190419153334-6ae3dd61145d // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
+	github.com/ishidawataru/sctp v0.0.0-20210707070123-9a39160e9062 // indirect
 	github.com/klauspost/cpuid v1.3.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/klauspost/reedsolomon v1.9.9 // indirect

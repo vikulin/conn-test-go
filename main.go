@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"net"
 	"io"
+	"log"
 	"time"
+	"strconv"
+	"strings"
 	mrand "math/rand"
 
 	/**QUIC related imports**/
@@ -21,7 +24,8 @@ import (
 
 	udt "github.com/vikulin/udt-conn"
 	quic "github.com/vikulin/quic-conn"
-	kcpconn "github.com/xtaci/kcp-go/v5"
+	sctp "github.com/ishidawataru/sctp"
+	kcp "github.com/xtaci/kcp-go/v5"
 )
 
 func main() {
@@ -54,8 +58,14 @@ func main() {
 				tlsConf := generateTLSConfig()
 				ln, err = quic.Listen("udp", *host, tlsConf)
 				fmt.Printf("Listening QUIC...")
+			case "sctp":
+				
+				addr := getAddr(*host)
+				log.Printf("raw addr: %+v\n", addr.ToRawSockAddrBuf())
+				ln, err = sctp.ListenSCTP("sctp", addr)
+				fmt.Printf("Listening SCTP...")
 			case "kcp":
-				ln, err = kcpconn.Listen(*host)
+				ln, err = kcp.Listen(*host)
 				fmt.Printf("Listening KCP...")
 			default:
 				
@@ -109,9 +119,15 @@ func main() {
 					NextProtos:   []string{"quic-conn-test"},
 				}
 				conn, err = quic.Dial(*host, tlsConf)
+			case "sctp":
+				addr := getAddr(*host)
+				laddr := &sctp.SCTPAddr{
+					Port: 0,
+				}
+				conn, err = sctp.DialSCTP("sctp", laddr, addr)
 			case "kcp":
 				fmt.Printf("Dialling...")
-				conn, err = kcpconn.Dial(*host)
+				conn, err = kcp.Dial(*host)
 				//workaround for https://github.com/xtaci/kcp-go/issues/225
 				conn.Write([]byte("."))
 			default:
@@ -233,5 +249,30 @@ func generateTLSConfig() *tls.Config {
 		Certificates: []tls.Certificate{tlsCert},
 		NextProtos:   []string{"quic-conn-test"},
 	}
+}
+
+//SCTP infrastructure
+func getAddr(host string) *sctp.SCTPAddr {
+
+	//sctp supports multihoming but current implementation reuires only one path
+	ips := []net.IPAddr{}
+	ip, port, err := net.SplitHostPort(host)
+	if err != nil {
+		panic(err)
+	}
+	for _, i := range strings.Split(ip, ",") {
+		if a, err := net.ResolveIPAddr("ip", i); err == nil {
+			log.Printf("Resolved address '%s' to %s", i, a)
+			ips = append(ips, *a)
+		} else {
+			log.Printf("Error resolving address '%s': %v", i, err)
+		}
+	}
+	p, _ := strconv.Atoi(port)
+	addr := &sctp.SCTPAddr{
+		IPAddrs: ips,
+		Port:    p,
+	}
+	return addr
 }
 
