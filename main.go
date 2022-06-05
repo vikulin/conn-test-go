@@ -22,7 +22,8 @@ import (
 
 	hash "github.com/zeebo/xxh3"
 
-	udt "github.com/vikulin/udt-conn"
+	//udt "github.com/vikulin/udt-conn"
+	//udt "github.com/jbenet/go-udtwrapper/udt"
 	quic "github.com/vikulin/quic-conn"
 	sctp "github.com/ishidawataru/sctp"
 	kcp "github.com/xtaci/kcp-go/v5"
@@ -51,7 +52,7 @@ func main() {
 				ln, err = net.Listen("tcp", *host)
 				fmt.Printf("Listening TCP...")
 			case "udt":
-				ln, err = udt.Listen("udp", *host)
+				//ln, err = udt.Listen(*host)
 				fmt.Printf("Listening UDT...")
 			case "quic":
 				//generate tls config
@@ -59,7 +60,6 @@ func main() {
 				ln, err = quic.Listen("udp", *host, tlsConf)
 				fmt.Printf("Listening QUIC...")
 			case "sctp":
-				
 				addr := getAddr(*host)
 				log.Printf("raw addr: %+v\n", addr.ToRawSockAddrBuf())
 				ln, err = sctp.ListenSCTP("sctp", addr)
@@ -112,7 +112,7 @@ func main() {
 				fmt.Printf("Dialling TCP...")
 				conn, err = net.Dial("tcp", *host)
 			case "udt":
-				//conn, err = udt.Dial(*host)
+				//conn, err = udt.Dial("0.0.0.0:0", *host)
 			case "quic":
 				fmt.Printf("Dialling QUIC...")
 				tlsConf := &tls.Config{
@@ -166,7 +166,7 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 		data := random_bytes(l)
 		hasher.Write(data)
 		conn.Write(data)
-		fmt.Println("part: %d, size: %d", i, len(data))
+		//fmt.Println("part: %d, size: %d", i, len(data))
 	}
 	if tail > 0 {
 		data := random_bytes(tail)
@@ -194,7 +194,7 @@ func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, d
 			t = t + n
 			i++
 		}
-		fmt.Println("part: %d, size: %d", i, t)
+		//fmt.Println("part: %d, size: %d", i, t)
 		hasher.Write(data[:n])
 	}
 }

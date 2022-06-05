@@ -173,6 +173,8 @@ github.com/vikulin/quic-conn v0.0.0-20220528080447-7790d1059a2e h1:diuAMtH5KfMtx
 github.com/vikulin/quic-conn v0.0.0-20220528080447-7790d1059a2e/go.mod h1:cYKmd22qM++J1jQ9whsgo/xwxodDZqVb6fXSQc/+8h8=
 github.com/vikulin/quic-conn v0.0.0-20220601181416-9fe208fd7d3e h1:PzpMhrQKHcrFBvYl1WQHors+HLn9nvtAAr/WqF1391g=
 github.com/vikulin/quic-conn v0.0.0-20220601181416-9fe208fd7d3e/go.mod h1:cYKmd22qM++J1jQ9whsgo/xwxodDZqVb6fXSQc/+8h8=
+github.com/vikulin/quic-conn v0.0.0-20220605143551-df0b7d4f0d65 h1:GCwO87wGrOUdiKjO36ZBGmvRP7ICfKj9kF1bEDYB9M0=
+github.com/vikulin/quic-conn v0.0.0-20220605143551-df0b7d4f0d65/go.mod h1:cYKmd22qM++J1jQ9whsgo/xwxodDZqVb6fXSQc/+8h8=
 github.com/vikulin/udt-conn v0.0.0-20220529173433-591b96e6b7ce h1:Oeb62SvLbaLgS6nQYDum6KtHiX0RIMxsC8Wt2BcG0j8=
 github.com/vikulin/udt-conn v0.0.0-20220529173433-591b96e6b7ce/go.mod h1:hgd5CUmAj/+8oKtqrSXQtkoq5ITzYaiXUdB0BNJu62s=
 github.com/vikulin/udt-conn v0.0.0-20220601163610-ed8b17328041 h1:KLZl1WrGSc7+iNDCoQqc37d4du+o3XS4OSlxBr65L1c=

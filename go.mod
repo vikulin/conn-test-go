@@ -24,7 +24,7 @@ require (
 	github.com/templexxx/cpu v0.0.7 // indirect
 	github.com/templexxx/xorsimd v0.4.1 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
-	github.com/vikulin/quic-conn v0.0.0-20220601181416-9fe208fd7d3e // indirect
+	github.com/vikulin/quic-conn v0.0.0-20220605143551-df0b7d4f0d65 // indirect
 	github.com/vikulin/udt-conn v0.0.0-20220601165718-e9303081796f // indirect
 	github.com/xtaci/kcp-go/v5 v5.6.1 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
