@@ -70,11 +70,9 @@ func main() {
 			default:
 				
 			}
-			
 			if err != nil {
 				panic(err)
 			}
-
 			/**
 			Listening for a connection
 			**/
@@ -84,6 +82,7 @@ func main() {
 			} else {
 				fmt.Printf("OK\n")
 			}
+			
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 
@@ -110,23 +109,26 @@ func main() {
 			**/
 			switch *proto {
 			case "tcp":
+				fmt.Printf("Dialling TCP...")
 				conn, err = net.Dial("tcp", *host)
 			case "udt":
 				//conn, err = udt.Dial(*host)
 			case "quic":
+				fmt.Printf("Dialling QUIC...")
 				tlsConf := &tls.Config{
 					InsecureSkipVerify: true,
 					NextProtos:   []string{"quic-conn-test"},
 				}
 				conn, err = quic.Dial(*host, tlsConf)
 			case "sctp":
+				fmt.Printf("Dialling SCTP...")
 				addr := getAddr(*host)
 				laddr := &sctp.SCTPAddr{
 					Port: 0,
 				}
 				conn, err = sctp.DialSCTP("sctp", laddr, addr)
 			case "kcp":
-				fmt.Printf("Dialling...")
+				fmt.Printf("Dialling KCP...")
 				conn, err = kcp.Dial(*host)
 				//workaround for https://github.com/xtaci/kcp-go/issues/225
 				conn.Write([]byte("."))
@@ -164,7 +166,7 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 		data := random_bytes(l)
 		hasher.Write(data)
 		conn.Write(data)
-		//fmt.Println("part: %d, size: %d", i, len(data))
+		fmt.Println("part: %d, size: %d", i, len(data))
 	}
 	if tail > 0 {
 		data := random_bytes(tail)
@@ -192,7 +194,7 @@ func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, d
 			t = t + n
 			i++
 		}
-		//fmt.Println("part: %d, size: %d", i, t)
+		fmt.Println("part: %d, size: %d", i, t)
 		hasher.Write(data[:n])
 	}
 }
