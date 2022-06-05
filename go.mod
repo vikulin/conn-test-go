@@ -9,7 +9,6 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/furstenheim/nth_element v0.0.0-20190419153334-6ae3dd61145d // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
-	github.com/ishidawataru/sctp v0.0.0-20210707070123-9a39160e9062 // indirect
 	github.com/klauspost/cpuid v1.3.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/klauspost/reedsolomon v1.9.9 // indirect
@@ -25,6 +24,7 @@ require (
 	github.com/templexxx/xorsimd v0.4.1 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	github.com/vikulin/quic-conn v0.0.0-20220605143551-df0b7d4f0d65 // indirect
+	github.com/vikulin/sctp v0.0.0-20220605165230-f122ae00e07c // indirect
 	github.com/vikulin/udt-conn v0.0.0-20220601165718-e9303081796f // indirect
 	github.com/xtaci/kcp-go/v5 v5.6.1 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect

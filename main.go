@@ -25,7 +25,8 @@ import (
 	//udt "github.com/vikulin/udt-conn"
 	//udt "github.com/jbenet/go-udtwrapper/udt"
 	quic "github.com/vikulin/quic-conn"
-	sctp "github.com/ishidawataru/sctp"
+	//sctp "github.com/ishidawataru/sctp"
+	sctp "github.com/vikulin/sctp"
 	kcp "github.com/xtaci/kcp-go/v5"
 )
 
@@ -61,8 +62,7 @@ func main() {
 				fmt.Printf("Listening QUIC...")
 			case "sctp":
 				addr := getAddr(*host)
-				log.Printf("raw addr: %+v\n", addr.ToRawSockAddrBuf())
-				ln, err = sctp.ListenSCTP("sctp", addr)
+				ln, err = sctp.NewSCTPListener(addr, sctp.InitMsg{}, sctp.OneToOne, false)
 				fmt.Printf("Listening SCTP...")
 			case "kcp":
 				ln, err = kcp.Listen(*host)
@@ -123,10 +123,16 @@ func main() {
 			case "sctp":
 				fmt.Printf("Dialling SCTP...")
 				addr := getAddr(*host)
-				laddr := &sctp.SCTPAddr{
-					Port: 0,
+				
+				conn, err = sctp.NewSCTPConnection(addr.AddressFamily, sctp.InitMsg{}, sctp.OneToOne, false)
+				if err != nil {
+					panic("failed to dial: " + err.Error())
 				}
-				conn, err = sctp.DialSCTP("sctp", laddr, addr)
+
+				if err := conn.(*sctp.SCTPConn).Connect(addr); err != nil {
+					panic("failed to dial: " + err.Error())
+				}
+
 			case "kcp":
 				fmt.Printf("Dialling KCP...")
 				conn, err = kcp.Dial(*host)
