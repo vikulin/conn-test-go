@@ -148,6 +148,7 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 		data := random_bytes(l)
 		hasher.Write(data)
 		conn.Write(data)
+		//fmt.Println("part: %d, size: %d", i, len(data))
 	}
 	if tail > 0 {
 		data := random_bytes(tail)
@@ -156,23 +157,26 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 	}
 }
 
-func download(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, data []byte) {
+func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, data []byte) {
 
 	defer elapsed_time(time.Now(), total, "download")
-
-	for i := 0; i < parts; i++ {
+	i:=0
+	t:=0
+	for {
 		n, err := read_conn(conn, data)
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
 			panic(err)
 		}
-		hasher.Write(data[:n])
-	}
-	if tail > 0 {
-		data := make([]byte, tail)
-		n, err := read_conn(conn, data)
-		if err != nil {
-			panic(err)
+		if n<0 {
+			break
+		} else {
+			t = t + n
+			i++
 		}
+		//fmt.Println("part: %d, size: %d", i, t)
 		hasher.Write(data[:n])
 	}
 }
