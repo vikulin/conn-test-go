@@ -22,6 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/templexxx/cpu v0.0.7 // indirect
 	github.com/templexxx/xorsimd v0.4.1 // indirect
+	github.com/thebagchi/sctp-go v1.1.0 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	github.com/vikulin/quic-conn v0.0.0-20220605143551-df0b7d4f0d65 // indirect
 	github.com/vikulin/sctp v0.0.0-20220605165230-f122ae00e07c // indirect

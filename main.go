@@ -9,6 +9,8 @@ import (
 	"time"
 	"strconv"
 	"strings"
+	"syscall"
+
 	mrand "math/rand"
 
 	/**QUIC related imports**/
@@ -27,6 +29,7 @@ import (
 	quic "github.com/vikulin/quic-conn"
 	//sctp "github.com/ishidawataru/sctp"
 	sctp "github.com/vikulin/sctp"
+	sctp_ti "github.com/thebagchi/sctp-go"
 	kcp "github.com/xtaci/kcp-go/v5"
 )
 
@@ -37,7 +40,6 @@ func main() {
 	startClient := flag.Bool("c", false, "client")
 	bufferLenght := flag.Int("b", 4096, "buffer")
 	proto := flag.String("r", "tcp", "proto")
-	//totalSize := flag.Int("t", 1073741824, "total")
 	totalSize := flag.Int("t", 40960, "total")
 	flag.Parse()
 
@@ -63,6 +65,20 @@ func main() {
 			case "sctp":
 				addr := getAddr(*host)
 				ln, err = sctp.NewSCTPListener(addr, sctp.InitMsg{}, sctp.OneToOne, false)
+				fmt.Printf("Listening SCTP...")
+			case "sctp_ti":
+				addr := getAddrTi(*host)
+				ln, err = sctp_ti.ListenSCTP(
+					"sctp4",
+					syscall.SOCK_STREAM,
+					addr,
+					&sctp_ti.SCTPInitMsg{
+						NumOutStreams:  0xffff,
+						MaxInStreams:   0,
+						MaxAttempts:    0,
+						MaxInitTimeout: 0,
+					},
+				)
 				fmt.Printf("Listening SCTP...")
 			case "kcp":
 				ln, err = kcp.Listen(*host)
@@ -132,7 +148,22 @@ func main() {
 				if err := conn.(*sctp.SCTPConn).Connect(addr); err != nil {
 					panic("failed to dial: " + err.Error())
 				}
-
+			case "sctp_ti":
+				fmt.Printf("Dialling SCTP...")
+				laddr := getAddrTi("0.0.0.0:0")
+				raddr := getAddrTi(*host)
+				conn, err = sctp_ti.DialSCTP(
+					"sctp4",
+					laddr,
+					raddr,
+					&sctp_ti.SCTPInitMsg{
+						NumOutStreams:  0xFFFF,
+						MaxInStreams:   0,
+						MaxAttempts:    0,
+						MaxInitTimeout: 0,
+					},
+				)
+				
 			case "kcp":
 				fmt.Printf("Dialling KCP...")
 				conn, err = kcp.Dial(*host)
@@ -172,7 +203,7 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 		data := random_bytes(l)
 		hasher.Write(data)
 		conn.Write(data)
-		//fmt.Println("part: %d, size: %d", i, len(data))
+		fmt.Println("part: %d, size: %d", i, len(data))
 	}
 	if tail > 0 {
 		data := random_bytes(tail)
@@ -200,7 +231,7 @@ func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, d
 			t = t + n
 			i++
 		}
-		//fmt.Println("part: %d, size: %d", i, t)
+		fmt.Println("part: %d, size: %d", i, t)
 		hasher.Write(data[:n])
 	}
 }
@@ -280,6 +311,14 @@ func getAddr(host string) *sctp.SCTPAddr {
 	addr := &sctp.SCTPAddr{
 		IPAddrs: ips,
 		Port:    p,
+	}
+	return addr
+}
+
+func getAddrTi(host string) *sctp_ti.SCTPAddr{
+	addr, err := sctp_ti.MakeSCTPAddr("sctp4", host)
+	if nil != err {
+		panic(err)
 	}
 	return addr
 }
