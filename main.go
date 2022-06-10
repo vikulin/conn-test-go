@@ -73,7 +73,7 @@ func main() {
 					syscall.SOCK_STREAM,
 					addr,
 					&sctp_ti.SCTPInitMsg{
-						NumOutStreams:  0xffff,
+						NumOutStreams:  0xFFFF,
 						MaxInStreams:   0,
 						MaxAttempts:    0,
 						MaxInitTimeout: 0,
@@ -163,7 +163,6 @@ func main() {
 						MaxInitTimeout: 0,
 					},
 				)
-				
 			case "kcp":
 				fmt.Printf("Dialling KCP...")
 				conn, err = kcp.Dial(*host)
@@ -257,8 +256,10 @@ func random_bytes(length int) []byte {
 
 func elapsed_time(start time.Time, total int, name string) {
 	elapsed := time.Since(start)
-	elapsed_seconds:=float64(elapsed/time.Second)
-	speed := float64(total)/(float64(1024*1024)*elapsed_seconds) /**MB/sec**/
+	elapsed_seconds := elapsed.Seconds()
+	totalMb := float64(total)/(1024.0*1024.0)
+	speed := totalMb/elapsed_seconds /**MB/sec**/
+	fmt.Printf("Total: %f MB\n", totalMb)
 	fmt.Printf("%f MB/sec\n", speed)
 	fmt.Printf("%s - %s time\n", elapsed, name)
 }
