@@ -203,7 +203,7 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 		data := random_bytes(l)
 		hasher.Write(data)
 		conn.Write(data)
-		fmt.Println("part: %d, size: %d", i, len(data))
+		//fmt.Println("part: %d, size: %d", i, len(data))
 	}
 	if tail > 0 {
 		data := random_bytes(tail)
@@ -219,19 +219,16 @@ func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, d
 	t:=0
 	for {
 		n, err := read_conn(conn, data)
-		if err == io.EOF {
-			break
-		}
 		if err != nil {
 			panic(err)
 		}
-		if n<0 {
+		if n<0 || t == total {
 			break
 		} else {
 			t = t + n
 			i++
 		}
-		fmt.Println("part: %d, size: %d", i, t)
+		//fmt.Println("part: %d, size: %d", i, t)
 		hasher.Write(data[:n])
 	}
 }
@@ -240,7 +237,7 @@ func read_conn(c net.Conn, buffer []byte) (int, error) {
     for {
         n, err := c.Read(buffer)
         if err != nil {
-            if err != io.EOF {
+            if err == io.EOF {
                return -1, nil
             } else {
             	return 0, err
