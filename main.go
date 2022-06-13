@@ -73,8 +73,8 @@ func main() {
 					syscall.SOCK_STREAM,
 					addr,
 					&sctp_ti.SCTPInitMsg{
-						NumOutStreams:  0xFFFF,
-						MaxInStreams:   0,
+						NumOutStreams:  100,
+						MaxInStreams:   100,
 						MaxAttempts:    0,
 						MaxInitTimeout: 0,
 					},
@@ -157,8 +157,8 @@ func main() {
 					laddr,
 					raddr,
 					&sctp_ti.SCTPInitMsg{
-						NumOutStreams:  0xFFFF,
-						MaxInStreams:   0,
+						NumOutStreams:  100,
+						MaxInStreams:   100,
 						MaxAttempts:    0,
 						MaxInitTimeout: 0,
 					},
