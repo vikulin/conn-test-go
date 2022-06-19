@@ -30,6 +30,7 @@ import (
 	//sctp "github.com/ishidawataru/sctp"
 	sctp "github.com/vikulin/sctp"
 	sctp_ti "github.com/thebagchi/sctp-go"
+	sctp_ce "git.cs.nctu.edu.tw/calee/sctp"
 	kcp "github.com/xtaci/kcp-go/v5"
 )
 
@@ -80,6 +81,10 @@ func main() {
 					},
 				)
 				fmt.Printf("Listening SCTP...")
+			case "sctp_ce":
+				addr := getAddrCe(*host)
+				ln, err = sctp_ce.ListenSCTP("sctp", addr)
+				fmt.Printf("Listening SCTP...")
 			case "kcp":
 				ln, err = kcp.Listen(*host)
 				fmt.Printf("Listening KCP...")
@@ -98,7 +103,9 @@ func main() {
 			} else {
 				fmt.Printf("OK\n")
 			}
-			
+			if(*proto=="sctp_ce"){
+				conn = sctp_ce.NewSCTPSndRcvInfoWrappedConn(conn.(*sctp_ce.SCTPConn))
+			}
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 
@@ -163,6 +170,12 @@ func main() {
 						MaxInitTimeout: 0,
 					},
 				)
+			case "sctp_ce":
+				laddr := &sctp_ce.SCTPAddr{
+					Port: 0,
+				}
+				addr := getAddrCe(*host)
+				conn, err = sctp_ce.DialSCTP("sctp", laddr, addr)
 			case "kcp":
 				fmt.Printf("Dialling KCP...")
 				conn, err = kcp.Dial(*host)
@@ -290,7 +303,6 @@ func generateTLSConfig() *tls.Config {
 
 //SCTP infrastructure
 func getAddr(host string) *sctp.SCTPAddr {
-
 	//sctp supports multihoming but current implementation reuires only one path
 	ips := []net.IPAddr{}
 	ip, port, err := net.SplitHostPort(host)
@@ -317,6 +329,30 @@ func getAddrTi(host string) *sctp_ti.SCTPAddr{
 	addr, err := sctp_ti.MakeSCTPAddr("sctp4", host)
 	if nil != err {
 		panic(err)
+	}
+	return addr
+}
+
+func getAddrCe(host string) *sctp_ce.SCTPAddr{
+
+	//sctp supports multihoming but current implementation reuires only one path
+	ips := []net.IPAddr{}
+	ip, port, err := net.SplitHostPort(host)
+	if err != nil {
+		panic(err)
+	}
+	for _, i := range strings.Split(ip, ",") {
+		if a, err := net.ResolveIPAddr("ip", i); err == nil {
+			log.Printf("Resolved address '%s' to %s", i, a)
+			ips = append(ips, *a)
+		} else {
+			log.Printf("Error resolving address '%s': %v", i, err)
+		}
+	}
+	p, _ := strconv.Atoi(port)
+	addr := &sctp_ce.SCTPAddr{
+		IPAddrs: ips,
+		Port:    p,
 	}
 	return addr
 }

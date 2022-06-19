@@ -5,6 +5,7 @@ go 1.17
 require github.com/vikulin/go-udt v0.0.0-20220601165625-0bf6445c2626
 
 require (
+	git.cs.nctu.edu.tw/calee/sctp v1.1.0 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/furstenheim/nth_element v0.0.0-20190419153334-6ae3dd61145d // indirect
