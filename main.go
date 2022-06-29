@@ -65,7 +65,8 @@ func main() {
 				fmt.Printf("Listening QUIC...")
 			case "sctp":
 				addr := getAddr(*host)
-				ln, err = sctp.NewSCTPListener(addr, sctp.InitMsg{}, sctp.OneToOne, false)
+				ln, err = sctp.NewSCTPListener(addr, sctp.InitMsg{NumOstreams: 100, MaxInstreams: 100}, sctp.OneToOne, false)
+				ln.(*sctp.SCTPListener).SetEvents(sctp.SCTP_EVENT_DATA_IO | sctp.SCTP_EVENT_ASSOCIATION)
 				fmt.Printf("Listening SCTP...")
 			case "sctp_ti":
 				addr := getAddrTi(*host)
@@ -103,6 +104,7 @@ func main() {
 			} else {
 				fmt.Printf("OK\n")
 			}
+
 			if(*proto=="sctp_ce"){
 				conn = sctp_ce.NewSCTPSndRcvInfoWrappedConn(conn.(*sctp_ce.SCTPConn))
 			}
@@ -122,7 +124,7 @@ func main() {
 	if *startClient {
 		// run the client
 		go func() {
-			data := make([]byte, *bufferLenght)
+			data := make([]byte, *bufferLenght+128)
 			hasher := hash.New()
 			fmt.Printf("Used hash: %T\n", *hasher)
 			var conn net.Conn
@@ -147,7 +149,7 @@ func main() {
 				fmt.Printf("Dialling SCTP...")
 				addr := getAddr(*host)
 				
-				conn, err = sctp.NewSCTPConnection(addr.AddressFamily, sctp.InitMsg{}, sctp.OneToOne, false)
+				conn, err = sctp.NewSCTPConnection(addr.AddressFamily, sctp.InitMsg{NumOstreams: 100, MaxInstreams: 100}, sctp.OneToOne, false)
 				if err != nil {
 					panic("failed to dial: " + err.Error())
 				}
@@ -232,7 +234,7 @@ func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, d
 	for {
 		n, err := read_conn(conn, data)
 		if err != nil {
-			panic(err)
+			//panic(err)
 		}
 		if n<0 || t == total {
 			break
