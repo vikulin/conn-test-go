@@ -234,7 +234,7 @@ func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, d
 	for {
 		n, err := read_conn(conn, data)
 		if err != nil {
-			//panic(err)
+			panic(err)
 		}
 		if n<0 || t == total {
 			break
