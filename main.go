@@ -42,6 +42,7 @@ func main() {
 	bufferLenght := flag.Int("b", 4096, "buffer")
 	proto := flag.String("r", "tcp", "proto")
 	totalSize := flag.Int("t", 40960, "total")
+	doUpload := flag.Bool("u", false, "upload")
 	flag.Parse()
 
 	if *startServer {
@@ -65,8 +66,8 @@ func main() {
 				fmt.Printf("Listening QUIC...")
 			case "sctp":
 				addr := getAddr(*host)
-				ln, err = sctp.NewSCTPListener(addr, sctp.InitMsg{NumOstreams: 100, MaxInstreams: 100}, sctp.OneToOne, false)
-				ln.(*sctp.SCTPListener).SetEvents(sctp.SCTP_EVENT_DATA_IO | sctp.SCTP_EVENT_ASSOCIATION)
+				ln, err = sctp.NewSCTPListener(addr, sctp.InitMsg{NumOstreams: 255, MaxInstreams: 255}, sctp.OneToOne, false)
+				ln.(*sctp.SCTPListener).SetEvents(sctp.SCTP_EVENT_DATA_IO)
 				fmt.Printf("Listening SCTP...")
 			case "sctp_ti":
 				addr := getAddrTi(*host)
@@ -110,8 +111,12 @@ func main() {
 			}
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
-
-			upload(conn, parts, tail, *totalSize, hasher, *bufferLenght)
+			
+			if *doUpload {
+				upload(conn, parts, tail, *totalSize, hasher, *bufferLenght)
+			} else {
+				download(conn, parts, tail, *totalSize, hasher, *bufferLenght)
+			}
 			
 			fmt.Printf("Done\n")
 			conn.Close()
@@ -124,7 +129,6 @@ func main() {
 	if *startClient {
 		// run the client
 		go func() {
-			data := make([]byte, *bufferLenght+128)
 			hasher := hash.New()
 			fmt.Printf("Used hash: %T\n", *hasher)
 			var conn net.Conn
@@ -149,11 +153,11 @@ func main() {
 				fmt.Printf("Dialling SCTP...")
 				addr := getAddr(*host)
 				
-				conn, err = sctp.NewSCTPConnection(addr.AddressFamily, sctp.InitMsg{NumOstreams: 100, MaxInstreams: 100}, sctp.OneToOne, false)
+				conn, err = sctp.NewSCTPConnection(addr.AddressFamily, sctp.InitMsg{NumOstreams: 255, MaxInstreams: 255}, sctp.OneToOne, false)
 				if err != nil {
 					panic("failed to dial: " + err.Error())
 				}
-
+				//conn.(*sctp.SCTPConn).SetEvents(sctp.SCTP_EVENT_DATA_IO | sctp.SCTP_EVENT_ASSOCIATION)
 				if err := conn.(*sctp.SCTPConn).Connect(addr); err != nil {
 					panic("failed to dial: " + err.Error())
 				}
@@ -196,7 +200,11 @@ func main() {
 			parts := *totalSize / *bufferLenght
 			tail := *totalSize - *bufferLenght * parts
 		
-			download(conn, parts, tail, *totalSize, hasher, data)
+			if *doUpload {
+				upload(conn, parts, tail, *totalSize, hasher, *bufferLenght)
+			} else {
+				download(conn, parts, tail, *totalSize, hasher, *bufferLenght)
+			}
 			
 			fmt.Printf("Done\n")
 			conn.Close()
@@ -226,9 +234,10 @@ func upload(conn net.Conn, parts int, tail int, total int, hasher *hash.Hasher, 
 	}
 }
 
-func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, data []byte) {
+func download(conn net.Conn, parts int, _ int, total int, hasher *hash.Hasher, l int) {
 
 	defer elapsed_time(time.Now(), total, "download")
+	data := make([]byte, l)
 	i:=0
 	t:=0
 	for {
